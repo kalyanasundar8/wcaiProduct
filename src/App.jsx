@@ -9,6 +9,7 @@ import ContentHome from './Products/ContentHome'
 import GeneratorModal from './Products/GeneratorModal'
 import { BlogHome } from './Products/BlogGenerator/BlogHome'
 import { BlogGenerator } from './Products/BlogGenerator/BlogGenerator'
+import OutlineListing from './Products/BlogGenerator/OutlineListing'
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           {/* Blog Generator routes */}
           <Route path='/blog-home' element={<BlogHome />}/>
           <Route path='/generate-blog' element={<BlogGenerator />}/>
+          <Route path='outlinelisting' element={<OutlineListing />}/>
         </Routes>
       </Router>
     </>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import OutlineListing from "./OutlineListing";
 
 export const Outlines = () => {
 
@@ -10,15 +11,17 @@ export const Outlines = () => {
   ])
   
   const [selectedOutlines, setSelectedOutlines] = useState([]);
+  console.log(selectedOutlines);
 
-  const outlineList = (outlineId) => {
+  const outlineList = (outlineId, outlineName) => {
 
-    const isSelected = selectedOutlines.includes(outlineId);
+    const isSelected = selectedOutlines.some((item) => item.id === outlineId);
 
     if(isSelected) {
-      setSelectedOutlines(selectedOutlines.filter(id => id !== outlineId));
+      setSelectedOutlines(selectedOutlines.filter((item) => item.id !== outlineId));
     } else {
-      setSelectedOutlines([...selectedOutlines, outlineId])
+      const selected = { id: outlineId, outline: outlineName}
+      setSelectedOutlines([...selectedOutlines, selected])
     }
   }
 
@@ -30,19 +33,24 @@ export const Outlines = () => {
           Lorem ipsum dolor sit amet consectetur, adipisicing elit.
         </p>
       </div>
-      { Array.isArray(outelines) ? outelines.map((out) => (
-        <div key={out.id} className={`cursor-pointer scrollable-content mb-4 max-w-screen-md mx-auto border-2 border-gray-300 p-3 rounded-[3px] ${
-          selectedOutlines.includes(out.id)
-            ? 'border-blue-400 text-blue-500'
-            : 'text-gray-400 hover:border-blue-400 hover:text-blue-500'
-        } transition-all duration-300 ease-in-out`}
-        onClick={() => outlineList(out.id)}>
-        <p>
-          { out.outline }
-        </p>
-      </div>    
-      )) : ( <p>Fill the details in that form and generate outlines for your blog</p> )}  
-    
+      {Array.isArray(outelines) ? (
+        outelines.map((out) => (
+          <div
+            key={out.id}
+            className={`cursor-pointer scrollable-content mb-4 max-w-screen-md mx-auto border-2 border-gray-300 p-3 rounded-[3px] ${
+              selectedOutlines.some((item) => item.id === out.id)
+                ? 'border-blue-400 text-blue-500'
+                : 'text-gray-400 hover:border-blue-400 hover:text-blue-500'
+            } transition-all duration-300 ease-in-out`}
+            onClick={() => outlineList(out.id, out.outline)}
+          >
+            <p>{out.outline}</p>
+          </div>
+        ))
+      ) : (
+        <p>Fill the details in that form and generate outlines for your blog</p>
+      )}
+      <OutlineListing selectedOutlines={selectedOutlines}/> 
     </main>
   );
 };
