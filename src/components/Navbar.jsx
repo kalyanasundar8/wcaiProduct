@@ -1,10 +1,43 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Logo from "../assets/new_wc_logo_white.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faTimes, faSignInAlt, faCertificate } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { faBars, faTimes, faSignInAlt, faCertificate, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { setIsAuthenticated } from "../redux/actions/AuthAction";
+import { useDispatch, useSelector } from 'react-redux';
 
 const Navbar = () => {
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const pathName = location?.pathname;
+
+    let isAuth = useSelector((state) => state?.auth?.isAuthenticated) || JSON.parse(localStorage.getItem("isAuthenticated"));
+
+    const [user, setUser] = useState();
+
+    useEffect(() => {
+        if(isAuth && localStorage.getItem("user")) {
+            setUser(localStorage.getItem("user"));
+        }
+    }, [isAuth]);
+
+    console.log(user);
+
+    const logOut = () => {
+        localStorage.removeItem("user");
+        dispatch(setIsAuthenticated(false));
+        if(pathName) {
+            navigate("/", { state: {
+                path: pathName
+            }});
+        } else {
+            navigate("/");
+        }
+        window.location.reload();
+    }
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const closeMenu = () => {
@@ -57,10 +90,17 @@ const Navbar = () => {
             </ul>
 
             <div className="hidden lg:flex items-center space-x-4">
-                <a href='/signin' className="flex items-center text-white font-semibold px-4 py-2 rounded-full">
+                { isAuth === true ? (
+                    <Link to="/" onClick={logOut} className="cursor-pointer flex items-center text-white font-semibold px-4 py-2 rounded-full">
+                    <FontAwesomeIcon icon={faSignOutAlt} className='fa-shake mr-2' />
+                    Sign Out
+                </Link>
+                ) : (
+                    <Link to='/signin' className="flex items-center text-white font-semibold px-4 py-2 rounded-full">
                     <FontAwesomeIcon icon={faSignInAlt} className='fa-shake mr-2' />
                     Sign In
-                </a>
+                </Link>
+                )}
                 <a href='/signup' className="light-button flex items-center px-8 py-3 text-white font-semibold">
                     <FontAwesomeIcon icon={faCertificate} className='fa-spin mr-2' />
                     Free Trial

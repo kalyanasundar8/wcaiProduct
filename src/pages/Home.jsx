@@ -7,8 +7,18 @@ import ImageThree from "../assets/hashtag_generate_page.png";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileText, faImage, faHashtag } from '@fortawesome/free-solid-svg-icons';
+import SuccessModel from '../common/SuccessModel';
+import { useLocation } from 'react-router-dom';
 
 const Home = () => {
+
+    const location = useLocation();
+    const pathName = location?.state?.path;
+    // console.log(pathName);
+    const message = location?.state?.message;
+    // console.log(message.data.name);
+
+    const [success, setSuccess] = useState("");
 
     const images = [
         { url: ImageOne },
@@ -23,15 +33,35 @@ const Home = () => {
     }
 
     useEffect(() => {
+
+        if(pathName === "/signin") {
+            console.log(message.data.name);
+            setSuccess(`✨🎉 Welcome back ${message.data.name}`);
+
+            const displayTime = 5000;
+            const clearSuccesTime = setTimeout(() => {
+                setSuccess("")
+            }, displayTime);
+            
+            return () => {
+                clearTimeout(clearSuccesTime);
+            }
+        }
+
+        // const displayTime = 5000;
+        // const disappearMessage = setInterval(() => {
+            
+        // }, displayTime);
+        
         const sliding = setInterval(() => {
             const newIndex = (currentIndex + 1) % images.length;
             updateIndex(newIndex);
         }, 2000);
 
         return () => {
+            // clearInterval(disappearMessage);
             clearInterval(sliding);
         };
-
     }, [currentIndex])
 
 
@@ -39,6 +69,9 @@ const Home = () => {
         <div className='mx-auto'>
             {/* Header section */}
             <section className='top-section'>
+                { success ? (
+                    <SuccessModel success={success}/>
+                ) : ""}
                 <Navbar />
                 <div className="my-20 mx-4 lg:mx-28 mt-40">
                     <div className="lg:w-1/2 mx-auto text-center">
